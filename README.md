@@ -38,7 +38,7 @@ var reader = new FLATBIN.Reader(this.response),
 
 The `vector` method assumes you're requesting a swath of data that has been prefixed with a `uint32` length.
 
-By the way, that was a zero-copy operation!  The backing store of the returned typed array is the array buffer that was used to construct `Buffer`.
+By the way, that was a zero-copy operation!  The backing store of the returned typed array is the array buffer that was used to construct `Reader`.
 
 What if the encoded length value is actually a count of 3-tuples instead of scalars?  Easy:
 
@@ -103,7 +103,7 @@ The `object` method an be used to parse both `struct` types and `table` types.  
 reader.registerTable('Rocket', [
     'id', reader.uint32,
     'engines', reader.vector.bind(reader, 'Engine')
-    'data', reader.vector.bind(buffer, Uint16Array, 3),
+    'data', reader.vector.bind(reader, Uint16Array, 3),
 ]);
 
 var myRocket = reader.object('Rocket');
