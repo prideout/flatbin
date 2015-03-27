@@ -11,7 +11,7 @@ xhr.responseType = 'arraybuffer';
 
 xhr.onload = function(e) {
     var arraybuffer = this.response;
-    // Hey, this is where I can use binjs!
+    // Hey, this is where I can use flatbin!
 };
 
 xhr.send();
