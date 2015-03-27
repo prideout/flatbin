@@ -1,17 +1,17 @@
 **bufferjs** is a tiny BSD-licensed utility that makes it easy to parse [ArrayBuffer](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer) objects, especially when they have a [flatbuffers](https://google.github.io/flatbuffers/) layout.
 
-### When it's useful
+### Rationale
 
-If you're a WebGL developer, you might find yourself requesting binary data from the server, and wanting to extract a typed array from it, along with some metadata:
+If you're a WebGL developer, you often want to request binary data from the server, and extract some typed arrays from it, along with some metadata:
 
 ```js
 var xhr = new XMLHttpRequest();
-xhr.open('GET', '/path/to/cooldata.bin', true);
+xhr.open('GET', '/path/to/graphics_data.bin', true);
 xhr.responseType = 'arraybuffer';
 
 xhr.onload = function(e) {
-  var arraybuffer = this.response;
-  // this is where I can use bufferjs!
+    var arraybuffer = this.response;
+    // Hey, this is where I can use bufferjs!
 };
 
 xhr.send();
@@ -28,7 +28,7 @@ var buf    = new Buffer(this.response),
     coolness = buf.float32();
 ```
 
-Suppose the binary starts with a magic 4-byte identifier, followed by `uint32` count, followed by that many floats:
+Suppose the binary starts with a magic 4-byte identifier, followed by `uint32` count, followed by that many floats.  You want those floats in a typed array, which you can pass straight to WebGL.  Easy:
 
 ```js
 var buf    = new Buffer(this.response),
@@ -36,7 +36,9 @@ var buf    = new Buffer(this.response),
     floats = buf.vector(Float32Array);
 ```
 
-The `vector` method assumes that the data you're requesting is prefixed with a `uint32` length.
+The `vector` method assumes you're requesting a swath of data that has been prefixed with a `uint32` length.
+
+By the way, that was a zero-copy operation!  The backing store of the returned typed array is the array buffer that was used to construct `Buffer`.
 
 What if the encoded length value is actually a count of 3-tuples instead of scalars?  Easy:
 
@@ -58,19 +60,20 @@ Strings must be encoded using 8-bit ASCII characters.  They have a length prefix
 **bufferjs** lets you define simple POD structures:
 
 ```js
-
+// Declare a struct type.
 buf.registerStruct('Rocket', [
     'id', buf.uint32,
     'velocity', buf.float32,
     'weight', buf.float32
 ]);
 
+// Extract an instance of the struct.
 var myRocket = buf.object('Rocket');
 console.info(myRocket.id, myRocket.velocity);
 
 ```
 
-Note that the second argument to `registerStruct` is a flat list of string-function pairs; it is not an object literal.
+Note that the second argument to `registerStruct` is a flat list of string-function pairs; it is not an object literal.  We want it to be clear that order is significant.
 
 You can also parse a size-prefixed array of structs:
 
@@ -93,7 +96,7 @@ Structs cannot contain vectors or strings, which brings us to...
 
 ### Tables
 
-The `object` method an be used to parse both `struct` types and `table` types.  Tables are registered the same way that structs are, but they're encoded a bit differently:
+The `object` method an be used to parse both `struct` types and `table` types.  Tables are registered in a similar way, but they're encoded a bit differently:
 
 ```js
 
@@ -104,7 +107,8 @@ buf.registerTable('Rocket', [
 ]);
 
 var myRocket = buf.object('Rocket');
+consle.info(myRocket.engines);
 
 ```
 
-Unlike structs, tables can have strings and vectors in them.  See the [flatbuffers](https://google.github.io/flatbuffers/) for more information about how they're laid out in memory.
+See the [flatbuffers](https://google.github.io/flatbuffers/) for more information about how tables are laid out in memory.
