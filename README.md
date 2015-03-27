@@ -57,7 +57,7 @@ Strings must be encoded using 8-bit ASCII characters.  They have a length prefix
 
 ### Structs
 
-**binjs** lets you define simple POD structures:
+**flatbin** lets you define simple POD structures:
 
 ```js
 // Declare a struct type.
