@@ -28,7 +28,7 @@ var buf    = new Buffer(this.response),
     coolness = buf.float32();
 ```
 
-Suppose the binary starts with a magic 4-byte identifier, followed by `uint32` count, followed by that many floats.  You want those floats in a typed array, which you can pass straight to WebGL.  Easy:
+Suppose the binary starts with a magic 4-byte identifier, followed by `uint32` count, followed by that many floats.  You want those floats in a typed array that you can pass straight to WebGL.  Easy:
 
 ```js
 var buf    = new Buffer(this.response),
@@ -50,7 +50,7 @@ How about length-prefixed strings?  Also easy:
 
 ```js
 var firstName = buf.string(),
-    lastName  = buf.string;
+    lastName  = buf.string();
 ```
 
 Strings must be encoded using 8-bit ASCII characters.  They have a length prefix _and_ a null-terminator.  If you need unicode support, you'll probably want to use a vector of 32-bit unsigned integers instead.  Or, you might consider using a more business-like protocol like JSON.  :)
@@ -73,15 +73,15 @@ console.info(myRocket.id, myRocket.velocity);
 
 ```
 
-Note that the second argument to `registerStruct` is a flat list of string-function pairs; it is not an object literal.  We want it to be clear that order is significant.
+The second argument to `registerStruct` is a flat list of string-function pairs, not an object literal.  We want it to be clear that order is significant.
 
-You can also parse a size-prefixed array of structs:
+You can also extract a size-prefixed array of structs:
 
 ```js
 var rockets  = buf.vector('Rocket');
 ```
 
-Structs can also be nested:
+Structs can be nested:
 
 ```js
 
