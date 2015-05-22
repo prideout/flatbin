@@ -1,3 +1,9 @@
+
+/**
+ * @fileoverview Little utility that makes it easy to parse typed arrays.
+ * @suppress {globalThis}
+ */
+
 if (this.goog) {
     goog.provide('FLATBIN');
 }
@@ -6,8 +12,6 @@ if (this.goog) {
 var FLATBIN = {};
 
 FLATBIN.Reader = (function() {
-
-    'use strict';
 
     /**
      * Makes it easy to parse a FlatBuffers buffer, or any buffer, really.
